@@ -70,12 +70,20 @@ car_data$브랜드 <- sapply(split_names, function(x) x[1])
 car_data$차종 <- sapply(split_names, function(x) paste(x[-1], collapse = " "))
 
 
+
 # 9번째 컬럼부터 끝(옵션 컬럼들)까지의 NA 값을 0으로 바꾸기
 car_data[, 9:ncol(car_data)][is.na(car_data[, 9:ncol(car_data)])] <- 0
 
 View(car_data)
 
-rite.csv(car_data, file = "car_data.csv", row.names = FALSE)
+# 가장 많은 차종을 찾는 코드
+# frequency_table <- table(car_data$차종)
+# most_common_car <- names(frequency_table)[which.max(frequency_table)]
+# most_common_car
+
+
+
+write.csv(car_data, file = "bobae_preprocessing.csv", row.names = FALSE)
 
 
 
