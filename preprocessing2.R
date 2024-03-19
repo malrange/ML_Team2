@@ -6,12 +6,12 @@ library(tidyr)
 library(stringr)
 
 
-# rm(list=ls())
+rm(list=ls())
 setwd("~/Desktop/ML_Team2/")
 car_data <- read.csv("car_bobe (2).csv", stringsAsFactors = FALSE)
 
 
-
+View(car_data)
 # '가격' 컬럼에 NA값이 있는 행을 제거합니다.
 car_data <- car_data[car_data$가격 != "", ]
 
@@ -42,7 +42,7 @@ car_data <- car_data %>%
 
 car_data$색상 <- sub("색.*", "", car_data$색상)
 
-unique(car_data$색상)
+#unique(car_data$색상)
 
 color_groups <- list(
   "흰" = c("흰", "진주", "진주투톤"),
@@ -81,9 +81,20 @@ View(car_data)
 # most_common_car <- names(frequency_table)[which.max(frequency_table)]
 # most_common_car
 
+# 맨 마지막 열을 맨 앞 열로 이동
+
+car_data <- car_data[, c(ncol(car_data), 1:(ncol(car_data)-1))]
 
 
-write.csv(car_data, file = "bobae_preprocessing.csv", row.names = FALSE)
+car_data$전손유무 <- 0
+car_data$침수유무 <- 0
+
+car_data$소유자.이전.횟수[car_data$소유자.이전.횟수 == ""] <- 0
+
+car_data <- car_data %>% 
+  mutate(`소유자.이전.횟수` = as.integer(gsub("회", "", `소유자.이전.횟수`)))
+
+write.csv(car_data, file = "bobae_preprocessing22.csv", row.names = FALSE)
 
 
 
