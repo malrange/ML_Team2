@@ -1,9 +1,24 @@
 # install.packages('dplyr')
 # install.packages('tidyr')
-
+# install.packages('gridExtra')
 library(dplyr)
 library(tidyr)
 library(stringr)
+library(ggplot2)
+library(gridExtra)
+
+# 필요한 패키지를 설치하고 불러옵니다.
+# install.packages("showtext")
+library(showtext)
+
+# showtext를 사용하여 폰트 시스템을 초기화합니다.
+showtext_auto(enable = TRUE)
+
+# 사용할 한글 폰트를 등록합니다. 여기서는 'NanumGothic'을 사용합니다.
+font_add_google("Nanum Gothic", "nanumgothic")
+
+# 그래픽 장치를 초기화하고 한글 폰트를 사용하도록 설정합니다.
+showtext_begin()
 
 
 rm(list=ls())
@@ -14,11 +29,13 @@ car_data <- read.csv("car_bobe (2).csv", stringsAsFactors = FALSE)
 View(car_data)
 # '가격' 컬럼에 NA값이 있는 행을 제거합니다.
 car_data <- car_data[car_data$가격 != "", ]
+car_data <- car_data %>% 
+  filter(!is.na(가격))
+car_data <- car_data %>% 
+  filter(!str_detect(가격, "^[^0-9]"))
 
 #가격 -> numeric 형으로
 
-car_data$가격[is.na(car_data$가격)] <- 0 # NA 값을 0으로 대체
-car_data <- car_data[car_data$가격 != '[판매완료]', ]
 car_data$가격 <- gsub('만원', '', car_data$가격)
 car_data$가격 <- gsub(',', '', car_data$가격)
 car_data$가격 <- as.numeric(car_data$가격)
@@ -57,29 +74,14 @@ for (group in names(color_groups)) {
   car_data$색상[car_data$색상 %in% color_groups[[group]]] <- group
 }
 
-#색상, 변속기 연료 컬럼 레이블 인코딩
-
-car_data$색상 <- as.numeric(factor(car_data$색상, levels = unique(car_data$색상)))
-car_data$변속기 <- as.numeric(factor(car_data$변속기, levels = unique(car_data$변속기)))
-car_data$연료 <- as.numeric(factor(car_data$연료, levels = unique(car_data$연료)))
-
 # '차종' 컬럼을 첫 공백을 기준으로 분할하여 '브랜드'와 '차종' 컬럼으로 나누기
 split_names <- strsplit(as.character(car_data$차종), " ", fixed = TRUE)
 
 car_data$브랜드 <- sapply(split_names, function(x) x[1])
 car_data$차종 <- sapply(split_names, function(x) paste(x[-1], collapse = " "))
 
-
-
 # 9번째 컬럼부터 끝(옵션 컬럼들)까지의 NA 값을 0으로 바꾸기
 car_data[, 9:ncol(car_data)][is.na(car_data[, 9:ncol(car_data)])] <- 0
-
-View(car_data)
-
-# 가장 많은 차종을 찾는 코드
-# frequency_table <- table(car_data$차종)
-# most_common_car <- names(frequency_table)[which.max(frequency_table)]
-# most_common_car
 
 # 맨 마지막 열을 맨 앞 열로 이동
 
@@ -94,7 +96,21 @@ car_data$소유자.이전.횟수[car_data$소유자.이전.횟수 == ""] <- 0
 car_data <- car_data %>% 
   mutate(`소유자.이전.횟수` = as.integer(gsub("회", "", `소유자.이전.횟수`)))
 
-write.csv(car_data, file = "bobae_preprocessing22.csv", row.names = FALSE)
+write.csv(car_data, file = "donotlabeling.csv", row.names = FALSE)
+
+#색상, 변속기 연료 컬럼 레이블 인코딩
+
+car_data$색상 <- as.numeric(factor(car_data$색상, levels = unique(car_data$색상)))
+car_data$변속기 <- as.numeric(factor(car_data$변속기, levels = unique(car_data$변속기)))
+car_data$연료 <- as.numeric(factor(car_data$연료, levels = unique(car_data$연료)))
+
+# 가장 많은 차종을 찾는 코드
+# frequency_table <- table(car_data$차종)
+# most_common_car <- names(frequency_table)[which.max(frequency_table)]
+# most_common_car
 
 
 
+write.csv(car_data, file = "bobae_preprocessing.csv", row.names = FALSE)
+
+View(car_data)
