@@ -114,3 +114,4 @@ car_data$연료 <- as.numeric(factor(car_data$연료, levels = unique(car_data$�
 write.csv(car_data, file = "bobae_preprocessing.csv", row.names = FALSE)
 
 View(car_data)
+str(car_data)
