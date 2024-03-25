@@ -11,6 +11,7 @@ showtext_auto(enable = TRUE)
 font_add_google("Nanum Gothic", "nanumgothic")
 
 data <- read.csv("donotlabeling.csv")
+data_2 <- read.csv("after_high_to_low.csv")
 
 unique(data$색상)
 
@@ -80,19 +81,19 @@ p4
 grid.arrange(p1, p2, p3, p4, nrow = 2)
 View(data)
 # 주행거리에 대한 히스토그램
-p5 <- ggplot(data, aes(x=주행거리)) +
+p5 <- ggplot(data_2, aes(x=주행거리)) +
   geom_histogram(binwidth=10000, fill="skyblue", color="black") +
   theme_minimal() +
   labs(title="주행거리 분포", x="주행거리 (km)", y="빈도") +
   scale_x_continuous(labels = scales::comma)
-
+p5
 # 배기량에 대한 히스토그램
-p6 <- ggplot(data, aes(x=배기량)) +
+p6 <- ggplot(data_2, aes(x=배기량)) +
   geom_histogram(binwidth=100, fill="pink", color="black") +
   theme_minimal() +
   labs(title="배기량 분포", x="배기량 (cc)", y="빈도") +
   scale_x_continuous(labels = scales::comma)
-
+p6
 p7 <- ggplot(data, aes(x=가격)) +
   geom_histogram(binwidth=100, fill="pink", color="black") +
   theme_minimal() +

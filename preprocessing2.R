@@ -109,9 +109,16 @@ car_data$연료 <- as.numeric(factor(car_data$연료, levels = unique(car_data$�
 # most_common_car <- names(frequency_table)[which.max(frequency_table)]
 # most_common_car
 
-
-
 write.csv(car_data, file = "bobae_preprocessing.csv", row.names = FALSE)
+
+# 가격 중 잘못 입력된 값 2개 정정하기
+car_data[car_data$가격 == 30000000, '가격'] = 3000
+car_data[car_data$가격 == 630000, '가격'] = 630
+
+# 주행거리 중 잘못 입력된 값 정정하기
+car_data[car_data$주행거리 == 2322500, '주행거리'] = 232000
+
+write.csv(car_data, file = "after_high_to_low.csv", row.names = FALSE)
 
 View(car_data)
 str(car_data)
