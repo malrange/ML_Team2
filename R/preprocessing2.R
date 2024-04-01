@@ -23,7 +23,7 @@ showtext_begin()
 
 rm(list=ls())
 setwd("~/Desktop/ML_Team2/")
-car_data <- read.csv("car_bobe (2).csv", stringsAsFactors = FALSE)
+car_data <- read.csv("./csv/car_bobe (2).csv", stringsAsFactors = FALSE)
 
 
 View(car_data)
@@ -96,7 +96,27 @@ car_data$소유자.이전.횟수[car_data$소유자.이전.횟수 == ""] <- 0
 car_data <- car_data %>% 
   mutate(`소유자.이전.횟수` = as.integer(gsub("회", "", `소유자.이전.횟수`)))
 
-write.csv(car_data, file = "donotlabeling.csv", row.names = FALSE)
+write.csv(car_data, file = "./csv/donotlabeling.csv", row.names = FALSE)
+View(car_data)
+#연식 데이터 형식 일치
+format_month <- function(year_month) {
+  year_month <- as.character(year_month)
+  split <- strsplit(year_month, "\\.")[[1]]
+  if(length(split) < 2 || is.na(split[2])) { # 분할된 데이터의 길이 검사 및 NA 체크
+    return(split[1]) # 또는 적절한 오류 처리 또는 기본값 반환
+  }
+  year <- split[1]
+  month <- split[2]
+  if (nchar(month) == 1) {
+    month <- paste0("0", month)
+  }
+  return(sprintf("%s", year))
+}
+
+car_data$연식 <- sapply(car_data$연식, format_month)
+
+print(df)
+
 
 #색상, 변속기 연료 컬럼 레이블 인코딩
 
@@ -109,7 +129,7 @@ car_data$연료 <- as.numeric(factor(car_data$연료, levels = unique(car_data$�
 # most_common_car <- names(frequency_table)[which.max(frequency_table)]
 # most_common_car
 
-write.csv(car_data, file = "bobae_preprocessing.csv", row.names = FALSE)
+write.csv(car_data, file = "../csv/bobae_preprocessing.csv", row.names = FALSE)
 
 # 가격 중 잘못 입력된 값 2개 정정하기
 car_data[car_data$가격 == 30000000, '가격'] = 3000
@@ -118,7 +138,7 @@ car_data[car_data$가격 == 630000, '가격'] = 630
 # 주행거리 중 잘못 입력된 값 정정하기
 car_data[car_data$주행거리 == 2322500, '주행거리'] = 232000
 
-write.csv(car_data, file = "after_high_to_low.csv", row.names = FALSE)
+write.csv(car_data, file = "./csv/bobae_final.csv", row.names = FALSE)
 
 View(car_data)
 str(car_data)
